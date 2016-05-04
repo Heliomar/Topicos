@@ -18,7 +18,6 @@ public class Simbolo extends ExpressaoAbstrata{
     String token = "";
     public Simbolo(String token){
         this.token = token;
-        //this.transicoes = new Stri
     }
     
     @Override
@@ -37,8 +36,8 @@ public class Simbolo extends ExpressaoAbstrata{
         transicao = new Transicao();
         transicao.inico = AFNParser.getCount();
         transicao.fim = AFNParser.getCount();
-        String[][] x = new String[][]{{transicao.inico,""+token,transicao.fim}};
-        transicao.transicoes = x;
+        String[][] novaTransicao = new String[][]{{transicao.inico,""+token,transicao.fim}};
+        transicao.transicoes = novaTransicao;
         //return R;
     }
 

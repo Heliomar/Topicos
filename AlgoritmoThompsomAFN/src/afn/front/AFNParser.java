@@ -13,6 +13,7 @@ import afn.front.OperadoresEnum.Operadores;
 import afn.back.Simbolo;
 import afn.util.Transicao;
 import afn.back.Uniao;
+import com.sun.org.apache.bcel.internal.generic.AALOAD;
 
 /**
  *
@@ -25,16 +26,27 @@ public class AFNParser{
     public static int COUNT = 0;
     private Transicao transicao;
     
+    public AFNParser(){
+        this.transicao = new Transicao();
+    }
+    /**
+     * Seta o AFN
+     * @param transicao 
+     */
     private void setTransicao(Transicao transicao){
         this.transicao = transicao;
     }
     
+    /**
+     * Retorna um AFN
+     * @return 
+     */
     public Transicao getTransicao(){
         return this.transicao;
     }
     
     /**
-     * Mantem um contador sequencial para os estados
+     * Mantem um contador sequencial para os estados [q0, q1, q2, qn]
      * @return um nome de estado qx;
      */
     public static String getCount(){
@@ -46,30 +58,25 @@ public class AFNParser{
      * para as classe responsaveis.
      * @param tokens uma expressão regular valida
      * @return AFN do 'tokens'
+     * Expressao Terminal -> cas o tamanho da string = 1 caractere (1 simbolo)
+     * Algoritmo:
+     * {1}Caso expressao terminal (tokens.length = 1), cria o AFN do caractere ex: a => q0, a, q1
+     * {2}Caso o segundo caractere da string seja um operador [* / +], verifica-se qual é o operador,
+     * remove ele da string e manda a string para a expressão abstrata referente ao operador.
+     * {3}Caso duas letras concatena.
      */
     public Transicao analisar(String tokens){
-        
-        /**
-        
-        if(expressaoTerminal(tokens)){
-            setTransicao(new Simbolo(tokens).resolver(tokens, 0));
-        }else{
-            setTransicao(new Concatenar().resolver(tokens, 1));
-        }if(!expressaoTerminal(tokens) && checaOperador(tokens.substring(1, 2))){
-            String operador = tokens.substring(0,1);
-            ExpressaoAbstrata Expressao = criarExpressao(getNomeDoOperador(operador));
-            //tokens = tokens.substring(0)+tokens.substring(2, tokens.length());
-            tokens = removerChar(tokens, 1);
-            setTransicao(Expressao.resolver(tokens, COUNT));
+       
+        if(tokens.equals("")){
+            return null;
         }
-        
-        */
-        if(expressaoTerminal(tokens)){
+        else if(expressaoTerminal(tokens)){
             setTransicao(new Simbolo(tokens).resolver(tokens, 0));
         }else{
             if(checaOperador(tokens.substring(1, 2))){
             String operador = tokens.substring(1,2);
             ExpressaoAbstrata Expressao = criarExpressao(getOperador(operador));
+            //Remove o operador [*/+]
             tokens = removerChar(tokens, 1);
             setTransicao(Expressao.resolver(tokens, 1));
             }else{
